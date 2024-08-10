@@ -1,0 +1,68 @@
+<div class="card">
+                <div class="card-header">
+                    <p class="card-text">
+                        <strong>Created_at:</strong>
+                        <%= transaction.created_at %>
+                    </p>
+                    <% if transaction.updated_at != transaction.created_at %>
+                        <p class="card-text">
+                            <strong>Updated_at:</strong>
+                            <%= transaction.updated_at %>
+                        </p>
+                    <% end %>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>Wallet:</strong>
+                        <%= transaction.wallet.name %>
+                    </p>
+                    <p class="card-text">
+                        <strong>Date of transaction:</strong>
+                        <%= transaction.datetime_of_transaction %>
+                    </p>
+                    <p class="card-text">
+                        <strong>Operation:</strong>
+                        <%= transaction.operation %>
+                    </p>
+                    <p class="card-text">
+                        <strong>Token:</strong>
+                        <%= transaction.symbol %>
+                    </p>
+                    <p class="card-text">
+                        <strong>Amount:</strong>
+                        <%= transaction.amount %>
+                    </p>
+                    <p class="card-text">
+                        <strong>price:</strong>
+                        $<%= transaction.price %>
+                    </p>
+                    <p class="card-text">
+                        <strong>Net value:</strong>
+                        $<%= transaction.net_value %>
+                    </p>
+                    <% if transaction.fees != 0 %>
+                        <p class="card-text">
+                            <strong>Fees:</strong>
+                            $<%= transaction.fees %>
+                        </p>
+                    <% end %>
+                    <% if transaction.total_value != transaction.net_value %>
+                        <p class="card-text">
+                            <strong>Total value:</strong>
+                            $<%= transaction.total_value %>
+                        </p>
+                    <% end %>
+                    <div class="d-flex flex-row">
+                        <%= link_to "Edit", edit_transaction_path(transaction), 
+                                                class: "btn btn-warning mb-1 me-2" 
+                                                %>
+                        <% if current_user == transaction.user %>
+                            <%= button_to "Delete", @transaction,  
+                                                    method: :delete, 
+                                                    data: { confirm: "Are you sure ?" },
+                                                    class: " btn btn-danger mb-1 me-2" 
+                                                    %>
+                        <% end %>
+                    </div>
+                </div>
+            </div>

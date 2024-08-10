@@ -1,0 +1,15 @@
+<div class="container-xl mt-5">
+    <div class="row text-center mb-5">
+        <h1 class="display-5"><%= @wallet.name %></h1>
+    </div>
+    
+    <%= render @wallet %>
+
+    <div class="row">
+        <div class="col">
+            <%= link_to "Back to wallets", wallets_path, 
+                                class: "btn btn-outline-secondary mb-1"
+                                %>
+        </div>
+    </div>
+</div>

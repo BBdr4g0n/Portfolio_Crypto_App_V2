@@ -1,0 +1,15 @@
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="text-center">
+            <h1 class="display-5">Users List</h1>
+        </div>
+    </div>
+
+    <% @users.each do |user|%>
+        <div class="row mb-5">
+            <div class="col col-10 offset-1 col-lg-6 offset-lg-3">
+                <%= render user %>
+            </div>
+        </div>
+    <%end%>
+</div>

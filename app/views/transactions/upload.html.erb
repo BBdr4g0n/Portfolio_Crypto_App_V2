@@ -1,0 +1,43 @@
+<div class="container offset-sm-2 mt-5">
+    <div class="row mb-3">
+        <div class="offset-sm-2">
+            <h1 class="display-5">Upload CSV file</h1>
+        </div>
+    </div>
+
+    <%= form_with url: import_path, method: :post, local: true, multipart: true do |form| %>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">
+                <%= form.label :file, "Select CSV File" %>
+            </label>
+            <div class="col-sm-5">
+                <%= form.file_field :file, class: "form-control" %>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-2 col-form-label">
+                <%= form.label :wallet_id, style: "display: block" %>
+            </label>
+            <div class="col-5">
+                <%= form.collection_select :wallet_id, Wallet.where(user_id: current_user).order(:name), :id, :name, {}, class: "form-select" %>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="offset-sm-2">
+                <%= form.submit "Upload", class: "btn btn-warning" %>
+            </div>
+        </div>
+    <% end %>
+
+    <br>
+
+    <div class="row mb-3">
+        <div class="d-flex flex-row offset-sm-2">
+            <%= link_to "Back to history", transactions_path, 
+                                class: "btn btn-outline-secondary mb-1"
+                                %>
+        </div>
+    </div>
+</div>

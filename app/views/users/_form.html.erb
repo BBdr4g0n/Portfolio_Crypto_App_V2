@@ -1,0 +1,40 @@
+<%= render 'shared/errors', object: @user %>
+
+<%= form_with(model: user) do |form| %>
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">
+            <%= form.label :username, style: "display: block" %>
+        </label>
+        <div class="col-sm-6">
+            <%= form.text_field :username, class: "form-control", placeholder: "username" %>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">
+            <%= form.label :email, style: "display: block" %>
+        </label>
+        <div class="col-sm-6">
+            <%= form.text_field :email, class: "form-control", placeholder: "email" %>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">
+            <%= form.label :password, style: "display: block" %>
+        </label>
+        <div class="col-sm-6">
+            <%= form.password_field :password, class: "form-control", placeholder: "password" %>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="offset-sm-2">
+            <% if logged_in? %>
+                <%= form.submit "Edit", class: "btn btn-warning" %>
+            <% else %>
+                <%= form.submit "Sign Up", class: "btn btn-warning" %>
+            <% end %>
+        </div>
+    </div>
+<% end %>

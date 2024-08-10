@@ -2,3 +2,5 @@
 //= link_tree ../../javascript .js
 //= link_tree ../../../vendor/javascript .js
 //= link_tree ../builds
+//= link custom.css
+//= link bootstrap.bundle.min.js

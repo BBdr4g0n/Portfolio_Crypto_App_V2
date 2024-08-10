@@ -1,0 +1,18 @@
+<div class="container mt-5">
+    <div class="row text-center mb-5">
+        <h1 class="display-5">Transaction</h1>
+    </div>
+    <div class="row mb-5">
+        <div class="col col-6 offset-3">
+            <%= render @transaction %>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-4 offset-3">
+            <%= link_to "Back to history", transactions_path, 
+                                class: "btn btn-outline-secondary mb-1"
+                                %>
+        </div>
+    </div>
+</div>

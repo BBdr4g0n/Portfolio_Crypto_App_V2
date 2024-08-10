@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>PortfolioCryptoAppV2</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+    <head>
+        <title>Portfolio Crypto App</title>
+        <%= favicon_link_tag asset_path('crypto_icon.png') %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-  </head>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <%= csrf_meta_tags %>
+        <%= csp_meta_tag %>
 
-  <body>
-    <%= yield %>
-  </body>
+        <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+        <%= stylesheet_link_tag "custom", "data-turbo-track": "reload" %>
+        <%= javascript_importmap_tags %>
+    </head>
+
+    <body>
+        <%= render "layouts/navigation" %>
+        <%= render 'shared/messages' %>
+        <%= yield %>
+    </body>
+
+    
+    <footer>
+        <%= render "layouts/footer" %>
+    </footer>
 </html>

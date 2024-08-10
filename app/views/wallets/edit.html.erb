@@ -1,0 +1,22 @@
+<div class="container offset-2 mt-5">
+    <div class="row mb-3">
+        <div class="offset-2">
+            <h1 class="display-5">Edit wallet</h1>
+        </div>
+    </div>
+
+    <%= render "form", wallet: @wallet %>
+
+    <br>
+
+    <div class="row mb-3">
+        <div class="d-flex flex-row offset-2">
+            <%= link_to "Show this wallet", @wallet, 
+                                    class: "btn btn-outline-secondary mb-1 me-2" 
+                                    %>
+            <%= link_to "Back to wallets", wallets_path, 
+                                class: "btn btn-outline-secondary mb-1"
+                                %>
+        </div>
+    </div>
+</div>

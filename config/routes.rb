@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :transactions
+  resources :wallets
+  resources :users, execpt: [:new]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -6,5 +9,19 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root 'pages#home'
+
+  get "signup", to: "users#new"
+
+  get "login", to: "sessions#new"
+  post "login", to: "sessions#create"
+  delete "logout", to: "sessions#destroy"
+
+  get 'upload', to: 'transactions#upload'
+  post 'import', to: 'transactions#import'
+
+  get 'dashboard', to: 'pages#dashboard'
+
+  get 'tokens/infos/:symbol', to: 'tokens#show_token_infos'
+  get 'tokens/list', to: 'tokens#list_tokens'
 end

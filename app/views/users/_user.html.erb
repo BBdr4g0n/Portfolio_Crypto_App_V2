@@ -1,0 +1,23 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">
+            <strong>Username:</strong>
+            <%= user.username %>
+        </h5>
+        <p class="card-text">
+            <strong>Email:</strong>
+            <%= user.email %>
+        </p>
+        <div class="d-flex flex-row">
+            <% if logged_in? && current_user.id == user.id %>
+                <%= link_to "Edit", edit_user_path(user), 
+                                    class: "btn btn-warning mb-1 me-2" 
+                                    %>
+                <%= button_to "Delete", user,  
+                                        method: :delete,
+                                        class: " btn btn-danger mb-1 me-2" 
+                                        %>
+            <% end %>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="container offset-sm-2 mt-5">
+    <div class="row mb-3">
+        <div class="offset-sm-2">
+            <h1 class="display-5">Edit</h1>
+        </div>
+    </div>
+
+    <%= render "form", user: @user %>
+
+    <br>
+
+    <div class="row mb-3">
+        <div class="d-flex flex-row offset-sm-2">
+            <%= link_to "Back to profile", @user, 
+                                        class: "btn btn-outline-secondary mb-1 me-2" 
+                                        %>
+        </div>
+    </div>
+</div>
