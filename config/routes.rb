@@ -20,7 +20,9 @@ Rails.application.routes.draw do
   get 'upload', to: 'transactions#upload'
   post 'import', to: 'transactions#import'
 
-  get 'dashboard', to: 'pages#dashboard'
+  get 'dashboard', to: 'dashboard#index'
+  get 'fetch_dashboard_data', to: 'dashboard#fetch_dashboard_data'
+  get 'fetch_chart_data', to: 'dashboard#fetch_chart_data'
 
   get 'tokens/infos/:symbol', to: 'tokens#show_token_infos'
   get 'tokens/list', to: 'tokens#list_tokens'

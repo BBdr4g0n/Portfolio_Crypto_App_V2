@@ -5,6 +5,10 @@ class PagesController < ApplicationController
 
   def dashboard
 
+  end
+
+  def fetch_dashboard_data
+
     @total_balance = 0
     @user_transactions = Transaction.where(user_id: current_user.id)
 
@@ -56,6 +60,10 @@ class PagesController < ApplicationController
       else
         token[:portfolio_percentage] = nil
       end
+    end
+
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 

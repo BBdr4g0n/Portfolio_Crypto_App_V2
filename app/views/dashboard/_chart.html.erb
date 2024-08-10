@@ -1,0 +1,8 @@
+<div class="card">
+  <div class="card-header text-bg-dark">
+    <h5 class="card-title">Portfolio distribution:</h5>
+  </div>
+  <div class="card-body">
+    <%= pie_chart portfolio_distribution, id: "chart-1", round: 2, zeros: true, suffix: "%", donut: true %>
+  </div>
+</div>
