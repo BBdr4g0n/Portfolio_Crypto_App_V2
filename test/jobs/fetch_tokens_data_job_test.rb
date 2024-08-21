@@ -1,6 +1,6 @@
 require "test_helper"
 
-class FetchDashboardDataJobTest < ActiveJob::TestCase
+class FetchTokensDataJobTest < ActiveJob::TestCase
   # test "the truth" do
   #   assert true
   # end
