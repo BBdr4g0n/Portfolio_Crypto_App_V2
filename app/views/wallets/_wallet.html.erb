@@ -8,18 +8,18 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <p class="card-text text-end">
-                            Balance: <strong><%= number_to_currency(@balance) %></strong>
+                            Balance: <strong><%= number_to_currency(@total_balance) %></strong>
                         </p>
                     </li>
                     <li class="list-group-item">
                         <p class="card-text text-end">
-                            Deposits: <%= number_to_currency(@wallet_deposits) %>
+                            Deposits: <%= number_to_currency(@total_deposits) %>
                         </p>
                         <p class="card-text text-end">
-                            Withdraws: <%= number_to_currency(@wallet_withdraws) %>
+                            Withdraws: <%= number_to_currency(@total_withdraws) %>
                         </p>
                         <p class="card-text text-end">
-                            PnL: <strong><%= number_to_currency(@wallet_profits_and_losses) %></strong>
+                            PnL: <strong><%= number_to_currency(@profits_and_losses) %></strong>
                         </p>
                     </li>
                 </ul>
@@ -33,7 +33,7 @@
                 <h5 class="card-title">Portfolio distribution:</h5>
             </div>
             <div class="card-body">
-                <%= pie_chart @wallet_distribution, round: 2, zeros: true, suffix: "%", donut: true %>
+                <%= pie_chart @portfolio_distribution, round: 2, zeros: true, suffix: "%", donut: true %>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% @wallet_tokens_data.each do |data| %>
+                <% @tokens_data.each do |data| %>
                     <tr>
                         <td><%= data[:symbol] %></td>
                         <td><%= number_to_currency(data[:current_price]) %></td>

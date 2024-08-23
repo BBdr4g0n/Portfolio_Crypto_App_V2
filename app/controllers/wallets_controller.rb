@@ -10,60 +10,22 @@ class WalletsController < ApplicationController
     @wallets = Wallet.all
   end
 
-  # GET /wallets/1 or /wallets/1.json
   def show
-    @balance = 0
-    @wallet_transactions = Transaction.where(user_id: current_user.id, wallet_id: @wallet.id)
+    wallet_id = @wallet.id
+    @wallet_data = Rails.cache.read("wallet_#{wallet_id}_tokens_data_for_user_#{current_user.id}")
 
-    @symbols = @wallet_transactions.select(:symbol).distinct.pluck(:symbol)
-
-    @wallet_tokens_data = @symbols.map do |symbol|
-      transactions = @wallet_transactions.for_symbol(symbol)
-
-      token_current_price = get_current_price(symbol)
-      token_average_buy_price = Transaction.average_buy_price(transactions)
-      token_average_sell_price = Transaction.average_sell_price(transactions)
-      token_balance = Transaction.balance(transactions)
-
-      if Float(token_current_price, exception: false) && Float(token_average_buy_price, exception: false)
-        token_current_price = token_current_price
-        token_balance_in_dollars = token_balance * token_current_price
-        token_potential_profits = token_balance * (token_current_price - token_average_buy_price.to_f)
-        @balance += token_balance_in_dollars
-      else
-        token_balance_in_dollars = nil
-        token_potential_profits = nil
-      end
-
-      {
-        symbol: symbol,
-        current_price: token_current_price,
-        average_buy_price: token_average_buy_price,
-        average_sell_price: token_average_sell_price,
-        balance: token_balance,
-        balance_in_dollars: token_balance_in_dollars,
-        potential_profits: token_potential_profits
-      }
+    if @wallet_data.nil?
+      Rails.logger.info "Wallet #{wallet_id} tokens data for user #{current_user.id} cache is empty"
+    else
+      Rails.logger.info "Retrieved wallet #{wallet_id} tokens data for user #{current_user.id} from cache"
     end
 
-    @wallet_deposits = @wallet_transactions.where( operation: "DEPOSIT").sum(:net_value)
-    @wallet_withdraws = @wallet_transactions.where( operation: "WITHDRAW").sum(:net_value).abs
-    @wallet_profits_and_losses = (@wallet_withdraws + @balance) - @wallet_deposits
-
-    @wallet_tokens_data.delete_if { |token| token[:balance_in_dollars] == nil || token[:balance_in_dollars] <= 0 }
-    @wallet_tokens_data.sort_by! { |token| token[:balance_in_dollars] }.reverse!
-
-    @wallet_distribution = {}
-
-    @wallet_tokens_data.each do |token|
-
-      if Float(token[:current_price], exception: false) && Float(token[:balance], exception: false)
-        token[:portfolio_percentage] = ((token[:balance] * token[:current_price]) / @balance) * 100
-        @wallet_distribution[token[:symbol]] = token[:portfolio_percentage]
-      else
-        token[:portfolio_percentage] = nil
-      end
-    end
+    @tokens_data = @wallet_data[:tokens_data]
+    @total_balance = @wallet_data[:total_balance]
+    @total_deposits = @wallet_data[:total_deposits]
+    @total_withdraws = @wallet_data[:total_withdraws]
+    @profits_and_losses = @wallet_data[:profits_and_losses]
+    @portfolio_distribution = @wallet_data[:portfolio_distribution]
   end
 
   # GET /wallets/new
@@ -80,6 +42,9 @@ class WalletsController < ApplicationController
     @wallet = Wallet.new(wallet_params)
     @wallet.user = current_user
     if @wallet.save
+      Rails.cache.write("authorisation_for_FetchTokensDataJob_for_session_#{current_session[:id]}_user_#{current_user.id}_wallet_#{@wallet.id}", true)
+      Rails.logger.info "Authorisation for FetchTokensDataJob for session #{current_session[:id]}; user #{current_user.id}; wallet #{@wallet.id} approved"
+      FetchTokensDataJob.perform_later(current_session[:id], current_user.id, @wallet.id)
       flash[:success] = "Wallet created!"
       redirect_to wallet_path(@wallet)
     else
@@ -99,6 +64,10 @@ class WalletsController < ApplicationController
 
   # DELETE /wallets/1 or /wallets/1.json
   def destroy
+    Rails.cache.delete("authorisation_for_FetchTokensDataJob_for_session_#{current_session[:id]}_user_#{current_user.id}_wallet_#{@wallet.id}")
+    Rails.logger.info "Authorisation for FetchTokensDataJob for session #{current_session[:id]}; user #{current_user.id}; wallet #{@wallet.id} cancelled"
+    Rails.cache.delete("wallet_#{@wallet.id}_tokens_data_for_user_#{current_user.id}")
+    Rails.logger.info "Wallet #{@wallet.id} tokens data for user #{current_user.id} cache deleted"
     @wallet.destroy!
     flash[:danger] = "Wallet deleted!"
     redirect_to wallets_path
@@ -120,12 +89,5 @@ class WalletsController < ApplicationController
         flash[:danger] = "You don't have the rights for this!"
         redirect_to root_path
       end
-    end
-
-    def get_current_price(symbol)
-      service = CoinloreService.new
-      current_price = service.get_current_price_by_symbol(symbol)
-
-      return current_price
     end
 end

@@ -4,20 +4,19 @@ class PagesController < ApplicationController
   end
 
   def dashboard
-    @user_data = Rails.cache.read('user_data')
-    Rails.logger.info "Retrieved user data: #{@user_data}"
+    @dashboard_data = Rails.cache.read("dashboard_tokens_data_for_user_#{current_user.id}")
 
-    if @user_data.nil?
-      Rails.logger.info "Cache is empty"
+    if @dashboard_data.nil?
+      Rails.logger.info "Dashboard tokens data for user #{current_user.id} cache is empty"
     else
-      Rails.logger.info "Retrieved #{@user_data} from cache"
+      Rails.logger.info "Retrieved dashboard tokens data for user #{current_user.id} from cache"
     end
 
-    @tokens_data = @user_data[:tokens_data]
-    @total_balance = @user_data[:total_balance]
-    @total_deposits = @user_data[:total_deposits]
-    @total_withdraws = @user_data[:total_withdraws]
-    @profits_and_losses = @user_data[:profits_and_losses]
-    @portfolio_distribution = @user_data[:portfolio_distribution]
+    @tokens_data = @dashboard_data[:tokens_data]
+    @total_balance = @dashboard_data[:total_balance]
+    @total_deposits = @dashboard_data[:total_deposits]
+    @total_withdraws = @dashboard_data[:total_withdraws]
+    @profits_and_losses = @dashboard_data[:profits_and_losses]
+    @portfolio_distribution = @dashboard_data[:portfolio_distribution]
   end
 end

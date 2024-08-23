@@ -1,19 +1,50 @@
 class FetchTokensDataJob < ApplicationJob
   queue_as :default
 
-  def perform(user_id, *wallet_id)
-    return unless Rails.cache.read("fetch_tokens_job_#{user_id}")
+  def perform(session_id, user_id, wallet_id = nil)
 
-    Rails.logger.info "Performing FetchTokensDataJob for user_id: #{user_id}, wallet_id: #{wallet_id}"
-    @user_data = get_tokens_data(user_id, *wallet_id)
-    Rails.cache.write('user_data', @user_data)
-    Rails.logger.info "Cached user data: #{Rails.cache.read('user_data')}"
+    if wallet_id && Rails.cache.read("authorisation_for_FetchTokensDataJob_for_session_#{session_id}_user_#{user_id}_wallet_#{wallet_id}").nil?
+      Rails.logger.info "FetchTokensDataJob for session #{session_id}; user #{user_id}; wallet #{wallet_id} deleted from Sidekiq"
+      return
+    elsif Rails.cache.read("authorisation_for_FetchTokensDataJob_for_session_#{session_id}_user_#{user_id}").nil?
+      Rails.logger.info "FetchTokensDataJob for session #{session_id}; user #{user_id} deleted from Sidekiq"
+      return
+    end
 
-    FetchTokensDataJob.set(wait: 1.minute).perform_later(user_id)
+    if wallet_id
+      Rails.logger.info "Performing FetchTokensDataJob for session #{session_id}; user #{user_id}; wallet #{wallet_id}"
+      @wallet_data = get_tokens_data(user_id, *wallet_id)
+
+      if @wallet_data.nil?
+        Rails.logger.info "An issue occured during FetchTokensDataJob for session #{session_id}; user #{user_id}; wallet #{wallet_id}"
+        Rails.logger.info "FetchTokensDataJob for session #{session_id}; user #{user_id}; wallet #{wallet_id} deleted from Sidekiq"
+        return
+      else
+        Rails.cache.write("wallet_#{wallet_id}_tokens_data_for_user_#{user_id}", @wallet_data)
+        Rails.logger.info "Data for session #{session_id}; user #{user_id}; wallet #{wallet_id} cached"
+        FetchTokensDataJob.set(wait: 1.minute).perform_later(session_id, user_id, *wallet_id)
+        Rails.logger.info "FetchTokensDataJob for session #{session_id}; user #{user_id}; wallet #{wallet_id} added to Sidekiq"
+      end
+
+    else
+      Rails.logger.info "Performing FetchTokensDataJob for session #{session_id}; user #{user_id}"
+      @dashboard_data = get_tokens_data(user_id)
+
+      if @dashboard_data.nil?
+        Rails.logger.info "An issue occured during FetchTokensDataJob for session #{session_id}; user #{user_id}"
+        Rails.logger.info "FetchTokensDataJob for session #{session_id}; user #{user_id} deleted from Sidekiq"
+        return
+      else
+        Rails.cache.write("dashboard_tokens_data_for_user_#{user_id}", @dashboard_data)
+        Rails.logger.info "Data for session #{session_id}; user #{user_id} cached"
+        FetchTokensDataJob.set(wait: 1.minute).perform_later(session_id, user_id)
+        Rails.logger.info "FetchTokensDataJob for session #{session_id}; user #{user_id} added to Sidekiq"
+      end
+    end
   end
 
   def get_tokens_data(user_id, *wallet_id)
-    Rails.logger.info "user_id: #{user_id}, wallet_id: #{wallet_id}"
+    Rails.logger.info "Fetching tokens data for user_id: #{user_id}, wallet_id: #{wallet_id}"
     @total_balance = 0
 
     if wallet_id.empty?
@@ -74,7 +105,7 @@ class FetchTokensDataJob < ApplicationJob
 
     end
 
-    @user_data = {
+    @data = {
       tokens_data: @tokens_data,
       total_balance: @total_balance,
       total_deposits: @total_deposits,
@@ -83,8 +114,8 @@ class FetchTokensDataJob < ApplicationJob
       portfolio_distribution: @portfolio_distribution
     }
 
-    Rails.logger.info "user_data: #{@user_data}"
-    return @user_data
+    #Rails.logger.info "/nData: #{@data}"
+    return @data
   end
 
   private
