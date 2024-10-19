@@ -19,4 +19,20 @@ class PagesController < ApplicationController
     @profits_and_losses = @dashboard_data[:profits_and_losses]
     @portfolio_distribution = @dashboard_data[:portfolio_distribution]
   end
+
+  def _totals
+    @dashboard_data = Rails.cache.read("dashboard_tokens_data_for_user_#{current_user.id}")
+
+    if @dashboard_data.nil?
+      Rails.logger.info "Dashboard tokens data for user #{current_user.id} cache is empty"
+    else
+      Rails.logger.info "Retrieved dashboard tokens data for user #{current_user.id} from cache"
+    end
+
+    @tokens_data = @dashboard_data[:tokens_data]
+  end
+
+  def update_totals
+    render turbo_stream: turbo_stream.replace("totals", partial: "pages/totals")
+  end
 end

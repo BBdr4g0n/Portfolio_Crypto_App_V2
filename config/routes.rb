@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post 'import', to: 'transactions#import'
 
   get 'dashboard', to: 'pages#dashboard'
+  get 'pages/update_totals', to: 'pages#update_totals'
 
   get 'tokens/infos/:symbol', to: 'tokens#show_token_infos'
   get 'tokens/list', to: 'tokens#list_tokens'

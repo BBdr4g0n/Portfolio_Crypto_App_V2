@@ -1,31 +1,9 @@
-<div class="container-xl">
+<div id="dashboard" data-controller="refresh" data-refresh-interval-value="5000" class="container-xl">
     <div class="row mb-5">
         <div class="col-12 col-md-5 col-lg-3 mb-5 md-md-0">
-            <div class="card">
-                <div class="card-header text-bg-dark">
-                    <h5 class="card-title">Global infos:</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <p class="card-text text-end">
-                                Total balance: <strong><%= number_to_currency(@total_balance) %></strong>
-                            </p>
-                        </li>
-                        <li class="list-group-item">
-                            <p class="card-text text-end">
-                                Total deposits: <%= number_to_currency(@total_deposits) %>
-                            </p>
-                            <p class="card-text text-end">
-                                Total withdraws: <%= number_to_currency(@total_withdraws) %>
-                            </p>
-                            <p class="card-text text-end">
-                                Total PnL: <strong><%= number_to_currency(@profits_and_losses) %></strong>
-                            </p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <turbo-frame id="totals">
+                <%= render 'pages/totals' %>
+            </turbo-frame>
         </div>
 
         <div class="col">

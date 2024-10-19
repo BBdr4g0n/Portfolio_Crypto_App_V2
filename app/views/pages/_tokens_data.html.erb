@@ -1,0 +1,30 @@
+<div class="table-responsive">
+    <table class="table table-hover align-middle text-center rounded-top overflow-hidden ">
+        <thead>
+            <tr class="table-dark">
+                <th scope="col">Token</th>
+                <th scope="col">Actual price</th>
+                <th scope="col">Average buy price</th>
+                <th scope="col">Average sell price</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Balance in $</th>
+                <th scope="col">Potential profits</th>
+                <th scope="col">%</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @tokens_data.each do |data| %>
+                <tr>
+                    <td><%= data[:symbol] %></td>
+                    <td><%= number_to_currency(data[:current_price]) %></td>
+                    <td><%= number_to_currency(data[:average_buy_price]) %></td>
+                    <td><%= number_to_currency(data[:average_sell_price]) %></td>
+                    <td><%= data[:balance].ceil(4) %></td>
+                    <td><%= number_to_currency(data[:balance_in_dollars]) %></td>
+                    <td><%= number_to_currency(data[:potential_profits]) %></td>
+                    <td><%= number_to_percentage(data[:portfolio_percentage], precision: 2) %></td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
